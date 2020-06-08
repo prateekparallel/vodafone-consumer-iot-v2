@@ -1,0 +1,10 @@
+server:
+  port: 8001
+  servlet.context-path: /iot
+
+spring:
+  application.name: vodafone-consumer-iot
+   
+  
+
+
