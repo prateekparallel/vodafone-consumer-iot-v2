@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class IOTControllerHttpPostTest extends IOTHttpMockMvcTest {
+public class IOTControllerHttpPostTest {
 
 	@LocalServerPort
 	private int port;

@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class IOTControllerHttpGetTest extends IOTHttpMockMvcTest{
+public class IOTControllerHttpGetTest{
 	
 	@LocalServerPort
     private int port;
@@ -100,7 +100,7 @@ public class IOTControllerHttpGetTest extends IOTHttpMockMvcTest{
     //timestamp in the database then not record will be found as no past record nearer to 
     //that timestamp will be available in the system. So not found will be send from server
     @Test
-    public void shouldReturnBadRequestStatus_WhenNoPastTimeStampAvailable() throws Exception {
+    public void shouldReturnNotFoundStatus_WhenNoPastTimeStampAvailable() throws Exception {
     	
     	String url = getBaseUrl() + "/iot/v2/event";
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -112,7 +112,7 @@ public class IOTControllerHttpGetTest extends IOTHttpMockMvcTest{
     	
     	IOTResponse iotResp = (IOTResponse)responseEntity.getBody();
    
-    	assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    	assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     	assertEquals("ERROR: No Device information available in near past", iotResp.getDescription());
     }
     

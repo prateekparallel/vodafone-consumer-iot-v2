@@ -13,11 +13,11 @@ public class IOTTESTUtil {
     	
     	final String csvFile = System.getProperty("user.dir") + "/" + "data.csv";
     	
-    	File newCsvFile = new File(csvFile);
-    	
-    	if(newCsvFile.length() > 0) {
-    		return csvFile;
-    	}
+//    	File newCsvFile = new File(csvFile);
+//    	
+//    	if(newCsvFile.length() > 0) {
+//    		return csvFile;
+//    	}
     			
 		FileWriter fileWriter = new FileWriter(csvFile);
 	    PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -37,6 +37,31 @@ public class IOTTESTUtil {
 	    printWriter.println("1582605615000,10013,6900233111,,,0.1,N/A,ON");
 	    printWriter.println("1582612875000,10014,6900233111,,,0.1,N/A,OFF");
 	    printWriter.print("1582605253000,10015,6900001001,41.73061,-74.935242,0.11,N/A,OFF");
+	    printWriter.close();
+	    
+	    return csvFile;
+    }
+    
+public static String creatAndGetBigCSVFile() throws IOException {
+    	
+    	final String csvFile = System.getProperty("user.dir") + "/" + "data.csv";
+    	
+//    	File newCsvFile = new File(csvFile);
+//    	
+//    	if(newCsvFile.length() > 0) {
+//    		return csvFile;
+//    	}
+    			
+		FileWriter fileWriter = new FileWriter(csvFile);
+	    PrintWriter printWriter = new PrintWriter(fileWriter);
+	    printWriter.println("DateTime,EventId,ProductId,Latitude,Longitude,Battery,Light,AirplaneMode");
+	    Long tstmp = 1582605077000L;
+	    
+	    for(int i =0; i<1000000; i++) {
+	    	printWriter.println(tstmp.toString() + ",10001,WG11155638,51.5185,-0.1736,0.99,OFF,OFF");
+	    	tstmp++;
+	    }
+	    
 	    printWriter.close();
 	    
 	    return csvFile;

@@ -15,11 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.vodafone.uk.iot.response.IOTResponse;
+import com.vodafone.uk.iot.service.IOTDataService;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class FileService {
+class FileServiceTest {
 	
 	@Autowired
 	IOTDataService fileService;

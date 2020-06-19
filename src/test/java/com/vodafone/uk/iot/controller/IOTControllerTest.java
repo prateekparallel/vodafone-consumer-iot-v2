@@ -10,8 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +28,8 @@ import com.vodafone.uk.iot.beans.CSVLocation;
 import com.vodafone.uk.iot.response.DeviceInfoResponse;
 import com.vodafone.uk.iot.response.IOTResponse;
 import com.vodafone.uk.iot.service.IOTDataService;
+import com.vodafone.uk.iot.service.IOTDeviceInfoService;
+
 import static com.vodafone.uk.iot.util.IOTTESTUtil.creatAndGetCSVFile;
 
 
@@ -36,7 +41,10 @@ public class IOTControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private IOTDataService iotDataService;
+	private IOTDataService fileService;
+	
+	@MockBean
+	private IOTDeviceInfoService deviceInfoService;
 	
 	@Test
 	public void shoulReturnOKStatus_WhenSuccessfullyLoadingCSVFile() throws Exception {
@@ -49,9 +57,8 @@ public class IOTControllerTest {
 		CSVLocation csvLocation = new CSVLocation();
 		csvLocation.setFilepath(csvFile);
 		
-		when(iotDataService.loadCSVFile(any()))
-		.thenReturn((ResponseEntity)ResponseEntity.status(HttpStatus.OK).body(resp));
-				
+		when(fileService.loadCSVFile(any())).thenReturn(Optional.of(resp));
+						
 		this.mockMvc
 				.perform(
 						post("/v2/event").contentType(APPLICATION_JSON)
@@ -72,8 +79,7 @@ public class IOTControllerTest {
 		CSVLocation csvLocation = new CSVLocation();
 		csvLocation.setFilepath(csvFile);
 		
-		when(iotDataService.loadCSVFile(any()))
-		.thenReturn((ResponseEntity)ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp));
+		when(fileService.loadCSVFile(any())).thenReturn(Optional.of(resp));
 				
 		this.mockMvc
 				.perform(
@@ -98,8 +104,7 @@ public class IOTControllerTest {
 		dr.setLongitude("-0.1736");
 		dr.setStatus("Active");
 		
-		when(iotDataService.getDeviceInfo(any(), any()))
-		.thenReturn((ResponseEntity)ResponseEntity.status(HttpStatus.OK).body(dr));
+		Mockito.doReturn(Optional.of(dr)).when(deviceInfoService).getDeviceInfo(any(), any());
 		
 		this.mockMvc.perform(get("/v2/event").param("ProductId","WG11155638")).andDo(print()).andExpect(status().isOk())
 				.andExpect(jsonPath("id").value("WG11155638"))
