@@ -14,10 +14,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class IOTSmokeTest {
 
     @Autowired
-    private IOTController controller;
+    private TrackerDeviceDataAccessController trackerDeviceDataAccessController;
+    
+    @Autowired
+    CSVUploadController csvUploadController;
 
     @Test
     public void contexLoads() throws Exception {
-        assertThat(controller).isNotNull();
+        assertThat(trackerDeviceDataAccessController).isNotNull();
+        assertThat(csvUploadController).isNotNull();
     }
 }

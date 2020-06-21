@@ -14,8 +14,8 @@ import com.vodafone.uk.iot.response.IOTResponse;
  * example project.
  */
 
-public interface IOTDataService {
+public interface IOTFileService {
 	
-	public Optional<IOTResponse> loadCSVFile(String filePath);
+	public Optional<IOTResponse> loadCSVFile(String filePath, Character separator);
 	
 }

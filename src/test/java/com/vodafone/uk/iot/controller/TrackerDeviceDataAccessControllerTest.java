@@ -2,10 +2,7 @@ package com.vodafone.uk.iot.controller;
 
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,79 +15,32 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vodafone.uk.iot.beans.CSVLocation;
 import com.vodafone.uk.iot.response.DeviceInfoResponse;
-import com.vodafone.uk.iot.response.IOTResponse;
-import com.vodafone.uk.iot.service.IOTDataService;
 import com.vodafone.uk.iot.service.IOTDeviceInfoService;
 
-import static com.vodafone.uk.iot.util.IOTTESTUtil.creatAndGetCSVFile;
 
+/***
+ * 
+ * @author Abhijit P Dutta
+ *
+ * This class is to just check our controller whether all controller apis/methods will 
+ * call successfully or not. Hence we are not going to test all condition with mock data
+ */
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(IOTController.class)
-public class IOTControllerTest {
+@WebMvcTest(TrackerDeviceDataAccessController.class)
+public class TrackerDeviceDataAccessControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private IOTDataService fileService;
-	
-	@MockBean
 	private IOTDeviceInfoService deviceInfoService;
 	
-	@Test
-	public void shoulReturnOKStatus_WhenSuccessfullyLoadingCSVFile() throws Exception {
 		
-		final String csvFile = creatAndGetCSVFile();
-		
-		IOTResponse resp = new IOTResponse();
-		resp.setDescription("data refreshed");
-		
-		CSVLocation csvLocation = new CSVLocation();
-		csvLocation.setFilepath(csvFile);
-		
-		when(fileService.loadCSVFile(any())).thenReturn(Optional.of(resp));
-						
-		this.mockMvc
-				.perform(
-						post("/v2/event").contentType(APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(csvLocation)))
-						.andDo(print())
-						.andExpect(jsonPath("description").value("data refreshed"))
-						.andExpect(status().isOk());
-	}
-	
-	@Test
-	public void shoulReturnNotFoundStatus_WhenCSVFile_Not_Found() throws Exception {
-		
-		final String csvFile = creatAndGetCSVFile();
-		
-		IOTResponse resp = new IOTResponse();
-		resp.setDescription("ERROR: no data file found");
-		
-		CSVLocation csvLocation = new CSVLocation();
-		csvLocation.setFilepath(csvFile);
-		
-		when(fileService.loadCSVFile(any())).thenReturn(Optional.of(resp));
-				
-		this.mockMvc
-				.perform(
-						post("/v2/event").contentType(APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(csvLocation)))
-						.andDo(print())
-						.andExpect(jsonPath("description").value("ERROR: no data file found"))
-						.andExpect(status().isNotFound());
-	}	
-	
-	
 	@Test
 	public void shouldReturnDeviceInformationWithOKStatus() throws Exception {
 		

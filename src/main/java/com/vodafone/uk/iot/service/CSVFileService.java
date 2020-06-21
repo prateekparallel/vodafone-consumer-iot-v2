@@ -1,4 +1,4 @@
-package com.vodafone.uk.iot.service.impl;
+package com.vodafone.uk.iot.service;
 
 import java.io.Reader;
 import java.util.List;
@@ -14,9 +14,10 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.vodafone.uk.iot.beans.DeviceDetails;
 import com.vodafone.uk.iot.constant.IOTConstant;
-import com.vodafone.uk.iot.db.DeviceDetailDB;
+import com.vodafone.uk.iot.db.IOTDataBase;
+import com.vodafone.uk.iot.db.service.IOTRepository;
 import com.vodafone.uk.iot.response.IOTResponse;
-import com.vodafone.uk.iot.service.IOTDataService;
+import com.vodafone.uk.iot.util.IOTUtil;
 
 import org.springframework.http.HttpStatus;
 
@@ -27,12 +28,11 @@ import org.springframework.http.HttpStatus;
  * and store each line of the file into a java POJO and generate a list of POJO
  * and store in the memory
  */
-public class FileService implements IOTDataService{
+public class CSVFileService implements IOTFileService{
 
 	@Autowired
-	DeviceDetailDB deviceDetailDB;
+	IOTRepository iotRepository;
 	
-	public FileService() {}
 	
 	/***
 	 * This method will load a csv file into the memory 
@@ -44,26 +44,29 @@ public class FileService implements IOTDataService{
 	 * @param filePath
 	 * @return IOTResponse
 	 */
+	//not two load operation can be allowed at the same time
 	@Override
-	public Optional<IOTResponse> loadCSVFile(String filePath){
+	public synchronized Optional<IOTResponse> loadCSVFile(String filePath, Character delimiter){
 		
-		List<DeviceDetails> deviceDetailList = null;
+		List<DeviceDetails> deviceDetailList = null;		
+			
+		if(IOTUtil.isValidDelimiter(delimiter) == false) {
+			delimiter = ','; //very common delimiter of a csv file
+		}
 		
 		IOTResponse resp = new IOTResponse();
-	
-		try {
-			Reader reader = new FileReader(filePath);
-			deviceDetailList = readAll(reader);
+		
+		//file will be close automatically after use or in a exception
+		try(Reader reader = new FileReader(filePath)){
+
+			deviceDetailList = readAll(reader, delimiter);
 			
 			if(deviceDetailList == null || deviceDetailList.isEmpty()) {
-				reader.close();
 				resp.setDescription(IOTConstant.ERROR_EMPTY_FILE);
 				return Optional.of(resp);
-			}					
-			
-			reader.close();
-			
-		} catch (FileNotFoundException e) {
+			}	
+		
+		}catch (FileNotFoundException e) {
 			resp.setDescription(IOTConstant.ERROR_FILE_NOT_FOUND);
 			System.out.println("File - " + filePath + " not found - " + e.getMessage());
 			return  Optional.of(resp);
@@ -75,12 +78,13 @@ public class FileService implements IOTDataService{
 			return Optional.of(resp);
 		}
 				
-		if(deviceDetailDB.saveOrUpdateDB(deviceDetailList) == 1) {
+		if(iotRepository.saveOrUpdate(deviceDetailList) == 1) {
 			resp.setDescription(IOTConstant.DATA_REFRESHED);
 		}
 		else {
 			deviceDetailList = null;
-			resp.setDescription("ERROR: A technical exception occurred - Failed to load DB");
+			resp.setDescription("ERROR: A technical exception occurred - Failed to load DB"
+					+ " - Check csv File and Delimiter");
 			System.out.println("Exception occured while Loading records in DB - ");
 			return Optional.of(resp);
 		}
@@ -88,18 +92,20 @@ public class FileService implements IOTDataService{
 		
 		return Optional.of(resp);
 		
-	}	
+	}		
+	
 	
 	/**
 	 * This method will load the csv into the java pojo DeviceDetails.class
 	 * @param reader
 	 * @return DeviceDetails List
 	 */ 
-	private List<DeviceDetails> readAll(Reader reader){
+	private List<DeviceDetails> readAll(Reader reader, char separator){
 		
 		HeaderColumnNameMappingStrategy<DeviceDetails> cpms = new HeaderColumnNameMappingStrategy<DeviceDetails>();
 		cpms.setType(DeviceDetails.class);
 		CsvToBean<DeviceDetails> csvToBean = new CsvToBeanBuilder<DeviceDetails>(reader)
+				   .withSeparator(separator)
 			       .withType(DeviceDetails.class)
 			       .withMappingStrategy(cpms)
 			       .build();

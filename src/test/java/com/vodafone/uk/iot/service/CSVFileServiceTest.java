@@ -1,6 +1,7 @@
 package com.vodafone.uk.iot.service;
 
 import static com.vodafone.uk.iot.util.IOTTESTUtil.creatAndGetCSVFile;
+import static com.vodafone.uk.iot.util.IOTTESTUtil.creatAndGetCorruptCSVFile;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileWriter;
@@ -15,22 +16,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.vodafone.uk.iot.response.IOTResponse;
-import com.vodafone.uk.iot.service.IOTDataService;
+import com.vodafone.uk.iot.service.IOTFileService;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class FileServiceTest {
+class CSVFileServiceTest {
 	
 	@Autowired
-	IOTDataService fileService;
+	IOTFileService fileService;
 	
 	@Test
 	void shouldReturn_Data_Refreshed_Msg_OnSuccessfullLoadingOfCSVFile() throws IOException{
 		
 		final String csvFile = creatAndGetCSVFile();			    
 	    
-	    Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile);
+	    Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile, ',');
 	    
 	    IOTResponse iotResp = resp.get();
 	   
@@ -44,7 +45,7 @@ class FileServiceTest {
 		//below file does not exist
 		final String csvFile = System.getProperty("user.dir") + "/" + "NotACSV.csv";		
 	    
-		Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile);
+		Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile, ',');
 	    IOTResponse iotResp =  (IOTResponse) resp.get();
 
 	    assertEquals(iotResp.getDescription(), "ERROR: no data file found");
@@ -61,10 +62,23 @@ class FileServiceTest {
 	    printWriter.println("DateTime,EventId,ProductId,Latitude,Longitude,Battery,Light,AirplaneMode");
 	    printWriter.close();
 	    
-	    Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile);
+	    Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile, ',');
 	    IOTResponse iotResp =  (IOTResponse) resp.get();
 	  
 	    assertEquals(iotResp.getDescription(), "ERROR: CSV file is empty or corrupt");
+        
+	}	
+	
+	@Test
+	void shouldReturn_Technical_Exception_When_Loading_Corrupt_CSVFile() throws IOException{
+		
+		final String csvFile = creatAndGetCorruptCSVFile();			    
+	    
+	    Optional<IOTResponse> resp = fileService.loadCSVFile(csvFile, ',');
+	    
+	    IOTResponse iotResp = resp.get();
+	   
+	    assertTrue(iotResp.getDescription().contains("ERROR: A technical exception occurred"));
         
 	}	
 

@@ -13,46 +13,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.vodafone.uk.iot.beans.CSVLocation;
+import com.vodafone.uk.iot.beans.CSVDetail;
 import com.vodafone.uk.iot.constant.IOTConstant;
 import com.vodafone.uk.iot.response.DeviceInfoResponse;
 import com.vodafone.uk.iot.response.IOTResponse;
-import com.vodafone.uk.iot.service.IOTDataService;
+import com.vodafone.uk.iot.service.IOTFileService;
 import com.vodafone.uk.iot.service.IOTDeviceInfoService;
 
 @Controller
 @RequestMapping("/v2")
-public class IOTController {
-	
-	@Autowired
-	IOTDataService dataService;
+public class TrackerDeviceDataAccessController implements IOTDataAccessController{
+		
 	
 	@Autowired
 	IOTDeviceInfoService deviceInfoService;
 	
-	
-	@PostMapping(path="/event",consumes = "application/json", produces = "application/json")
-	public ResponseEntity<IOTResponse> loadCSVFile(@RequestBody CSVLocation csvLocation) {//throws IOTException {
-		
-		Optional<IOTResponse> resp = dataService.loadCSVFile(csvLocation.getFilepath());
-		IOTResponse iotResponse = resp.get();
-		
-		if(iotResponse.getDescription().equals(IOTConstant.DATA_REFRESHED)) {
-			return ResponseEntity.ok(iotResponse);
-		}
-		else if(iotResponse.getDescription().equals(IOTConstant.ERROR_EMPTY_FILE)) {
-			return ResponseEntity.badRequest().body(iotResponse);
-		}
-		else if(iotResponse.getDescription().equals(IOTConstant.ERROR_TECHNICAL_EXCEP)) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(iotResponse);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(iotResponse);
-	}
-	
-	
-	@GetMapping(path="/event", produces = "application/json")
-	public ResponseEntity<?> getDeviceInfo(@RequestParam(value="ProductId",required = true) 
-	String ProductId, @RequestParam(value="tstmp",required = false) Long tstmp ){
+	public ResponseEntity<?> getDeviceInfo(String ProductId, Long tstmp ){
 		
 		Optional<?> resp = deviceInfoService.getDeviceInfo(ProductId, tstmp);
 		
@@ -68,8 +44,11 @@ public class IOTController {
 		if(iotResponse.getDescription().equals(IOTConstant.ERROR_DEVICE_NOT_LOCATED)) {
 			httpstatus = HttpStatus.BAD_REQUEST;
 		}
+		else if(iotResponse.getDescription().equals(IOTConstant.ERROR_DB_EMPTY)) {
+			httpstatus = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
 		
-		return ResponseEntity.status(httpstatus).body(resp.get());
+		return ResponseEntity.status(httpstatus).body(iotResponse);
 
 	}	
 	
