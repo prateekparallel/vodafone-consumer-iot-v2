@@ -170,7 +170,7 @@ public class DeviceInfoServiceTest {
 		assertEquals(deviceInfoResponse.getDatetime(), "25/02/2020 04:31:17");
 		assertEquals(deviceInfoResponse.getLongitude(), "-0.1736");
 		assertEquals(deviceInfoResponse.getLatitude(), "51.5185");
-		assertEquals(deviceInfoResponse.getStatus(), "Inactive");
+		assertEquals(deviceInfoResponse.getStatus(), "N/A");
 		assertEquals(deviceInfoResponse.getBattery(), "Full");
 		assertEquals(deviceInfoResponse.getDescription(), "SUCCESS: Location identified.");
 
@@ -386,7 +386,7 @@ public class DeviceInfoServiceTest {
 	// "1582605377000,10009,WG11155805,45.5186,-12.52027,0.83,ON,OFF"
 	// "1582605437000,10010,WG11155805,45.5187,-12.52001,0.82,ON,OFF"
 	@Test
-	void shouldReturnCorrectTrackingInformationOfDevice_WithStatus_InActive_WhenOneGPS_Info_Missing()
+	void shouldReturnCorrectTrackingInformationOfDevice_WithStatus_NA_WhenNotEnoughGPS_Info()
 			throws IOException {
 
 		final String csvFile = creatAndGetCSVFile();
@@ -402,7 +402,7 @@ public class DeviceInfoServiceTest {
 		assertEquals(deviceInfoResponse.getDatetime(), "25/02/2020 04:37:17");
 		assertEquals(deviceInfoResponse.getLongitude(), "-12.52001");
 		assertEquals(deviceInfoResponse.getLatitude(), "45.5187");
-		assertEquals(deviceInfoResponse.getStatus(), "Inactive");
+		assertEquals(deviceInfoResponse.getStatus(), "N/A");
 		assertEquals(deviceInfoResponse.getBattery(), "Low");
 		assertEquals(deviceInfoResponse.getDescription(), "SUCCESS: Location identified.");
 

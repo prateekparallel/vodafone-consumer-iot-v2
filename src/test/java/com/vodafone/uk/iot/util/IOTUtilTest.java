@@ -136,12 +136,12 @@ class IOTUtilTest {
 	}
 
 	@Test
-	void shouldReturnInActive_WhenOneGPSDataSame_Set_Missing() {
+	void shouldReturnInActive_WhenOneGPSDataSame_Not_Enough_Missing() {
 		List<DeviceDetails> dlist = new LinkedList<DeviceDetails>();
 		dlist.add(getDeviceDetail(45.5180, -12.52041));
 		dlist.add(getDeviceDetail(45.5187, -12.52001));
 		// dlist.add(getDeviceDetail(45.5187,-12.52001));
-		assertEquals(IOTUtil.getStatus(dlist), "Inactive");
+		assertEquals(IOTUtil.getStatus(dlist), "N/A");
 	}
 
 	@Test

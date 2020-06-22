@@ -77,7 +77,7 @@ public class IOTUtil {
 		Double averageDistance = distance / numberOfCoOrdinates;
 
 		if (numberOfCoOrdinates <= 2) {
-			return status;
+			return "N/A";//not enough GPS reading
 		} else if (averageDistance >= 10) {
 			return "Active";
 		} else if (averageDistance > 0) {
