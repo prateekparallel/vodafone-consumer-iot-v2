@@ -10,8 +10,6 @@ import com.vodafone.uk.iot.response.IOTResponse;
 /***
  * 
  * @author Abhijit P Dutta
- * This  class provides all the get and post services for this
- * example project.
  */
 
 public interface IOTFileService {

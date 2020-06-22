@@ -7,17 +7,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.vodafone.uk.iot.beans.DeviceDetails;
 import com.vodafone.uk.iot.beans.ProductList;
 import com.vodafone.uk.iot.constant.IOTConstant;
-import com.vodafone.uk.iot.db.IOTDataBase;
 import com.vodafone.uk.iot.db.service.IOTRepository;
 import com.vodafone.uk.iot.exception.IOTException;
 import com.vodafone.uk.iot.response.DeviceInfoResponse;
 import com.vodafone.uk.iot.response.IOTResponse;
 import com.vodafone.uk.iot.util.IOTUtil;
 
+
+@Service
 public class DeviceInfoService implements IOTDeviceInfoService {
 
 	@Autowired
@@ -25,10 +27,10 @@ public class DeviceInfoService implements IOTDeviceInfoService {
 
 	/**
 	 * Below method will generate a DeviceInfoResponse if a device found in the
-	 * memory based on productId and timestamp for that device. If timestamp is not
-	 * available, it will return the information of a device record which is latest
-	 * in past i.e. near to timestamp provided by the caller. Appropriate error
-	 * response will be send back to call for any failure
+	 * memory/db based on productId and timestamp for that device. If timestamp is not
+	 * available, it will return the information of a device record which is immediate
+	 * nearest in past i.e. near to timestamp provided by the caller. Appropriate error
+	 * response will be send back to caller for any failure
 	 * 
 	 * @param productId
 	 * @param tstmp

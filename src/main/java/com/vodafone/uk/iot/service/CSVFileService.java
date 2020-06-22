@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -14,12 +15,9 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.vodafone.uk.iot.beans.DeviceDetails;
 import com.vodafone.uk.iot.constant.IOTConstant;
-import com.vodafone.uk.iot.db.IOTDataBase;
 import com.vodafone.uk.iot.db.service.IOTRepository;
 import com.vodafone.uk.iot.response.IOTResponse;
 import com.vodafone.uk.iot.util.IOTUtil;
-
-import org.springframework.http.HttpStatus;
 
 /***
  * 
@@ -28,6 +26,8 @@ import org.springframework.http.HttpStatus;
  * and store each line of the file into a java POJO and generate a list of POJO
  * and store in the memory
  */
+
+@Service
 public class CSVFileService implements IOTFileService{
 
 	@Autowired
@@ -72,7 +72,7 @@ public class CSVFileService implements IOTFileService{
 			return  Optional.of(resp);
 		}catch(Exception e) {
 			deviceDetailList = null;
-			resp.setDescription(IOTConstant.ERROR_TECHNICAL_EXCEP + e.getMessage());
+			resp.setDescription(IOTConstant.ERROR_TECHNICAL_EXCEP + " - " + e.getMessage());
 			System.out.println("Exception occured while processing file - " + filePath 
 					+ " reason - " + e.getMessage());
 			return Optional.of(resp);

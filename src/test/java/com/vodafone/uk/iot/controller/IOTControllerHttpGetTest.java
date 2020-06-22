@@ -43,12 +43,12 @@ public class IOTControllerHttpGetTest {
 	private TestRestTemplate restTemplate;
 
 	@Autowired
-	IOTFileService iOTDataService;
+	IOTFileService fileService;
 
 	@Test
 	public void shouldReturnOKStatusCode_WhenFoundADevice() throws Exception {
 
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -72,7 +72,7 @@ public class IOTControllerHttpGetTest {
 
 	@Test
 	public void shouldReturnNearerDeviceRecordInPast_WhenSendingEmptyTimeStamp() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "WG11155638");
@@ -107,7 +107,7 @@ public class IOTControllerHttpGetTest {
 	// from server
 	@Test
 	public void shouldReturnNotFoundStatus_WhenNoPastTimeStampAvailable_WG() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "WG11155638");
@@ -124,7 +124,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test GeneralTracker
 	public void shouldReturnNotFoundStatus_WhenNoPastTimeStampAvailable_69() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "6900001001");
@@ -141,7 +141,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - GeneralTracker
 	public void shouldReturnBadRequestStatus_WhenNoLatitudeOrLongitudeAvailable_69() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "6900233111");
@@ -158,7 +158,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - CyclePlusTracker
 	public void shouldReturnBadRequestStatus_WhenNoLatitudeOrLongitudeAvailable_WG() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "WG11155804");
@@ -175,7 +175,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - GeneralTracker
 	public void shouldReturnOkStatus_And_Location_not_available_WhenAirPlaneModeON_69() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "6900233111");
@@ -199,7 +199,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - CyclePlusTracker
 	public void shouldReturnOkStatus_And_Location_not_available_WhenAirPlaneModeON_WG() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "WG11155841");
@@ -223,7 +223,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - GeneralTracker
 	public void shouldReturnNotFoundstStatus_WhenDataNotAvailableForAProductID_69() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "6900233122");
@@ -240,7 +240,7 @@ public class IOTControllerHttpGetTest {
 	@Test
 	// Test for device - CyclePlusTracker
 	public void shouldReturnNotFoundstStatus_WhenDataNotAvailableForAProductID_WG() throws Exception {
-		iOTDataService.loadCSVFile(creatAndGetCSVFile(), ',');
+		fileService.loadCSVFile(creatAndGetCSVFile(), ',');
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("ProductId", "WG11155691");
@@ -263,7 +263,7 @@ public class IOTControllerHttpGetTest {
 	// "1582605437000,10010,WG11155801,45.5187,-12.52001,0.82,ON,OFF"
 	void shouldReturnCorrectTrackingInformationOfADevice_WithStatus_Active() throws IOException {
 
-		iOTDataService.loadCSVFile(creatAndGetCSVFile_TAB_SEP(), '	');
+		fileService.loadCSVFile(creatAndGetCSVFile_TAB_SEP(), '	');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -297,7 +297,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile_Semi_Colon_SEPA();
 
-		iOTDataService.loadCSVFile(csvFile, ';');
+		fileService.loadCSVFile(csvFile, ';');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -331,7 +331,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile_COLON_SEP();
 
-		iOTDataService.loadCSVFile(csvFile, ':');
+		fileService.loadCSVFile(csvFile, ':');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -366,7 +366,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile_PIPE_SEP();
 
-		iOTDataService.loadCSVFile(csvFile, '|');
+		fileService.loadCSVFile(csvFile, '|');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -401,7 +401,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile();
 
-		iOTDataService.loadCSVFile(csvFile, ',');
+		fileService.loadCSVFile(csvFile, ',');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -438,7 +438,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile();
 
-		iOTDataService.loadCSVFile(csvFile, ',');
+		fileService.loadCSVFile(csvFile, ',');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -466,7 +466,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile();
 
-		iOTDataService.loadCSVFile(csvFile, ',');
+		fileService.loadCSVFile(csvFile, ',');
 
 		String url = getBaseUrl() + "/iot/v2/event";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
@@ -501,7 +501,7 @@ public class IOTControllerHttpGetTest {
 
 		final String csvFile = creatAndGetCSVFile();
 
-		iOTDataService.loadCSVFile(csvFile, ',');
+		fileService.loadCSVFile(csvFile, ',');
 		Long tstmp = 1582605437000L;
 
 		String url = getBaseUrl() + "/iot/v2/event";

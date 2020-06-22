@@ -7,7 +7,7 @@ import com.opencsv.bean.CsvBindByName;
  * 
  * @author Abhijit P Dutta
  * 
- *This class is to store each raw of the csv file
+ *This class is to store each raw of the csv file i.e. device's GPS data
  */
 public class DeviceDetails {
 	

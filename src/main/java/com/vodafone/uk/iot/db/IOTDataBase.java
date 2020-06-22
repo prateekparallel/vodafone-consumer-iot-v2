@@ -7,13 +7,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.vodafone.uk.iot.beans.DeviceDetails;
 import com.vodafone.uk.iot.constant.IOTConstant;
 import com.vodafone.uk.iot.exception.IOTException;
 
-@Component
+@Repository
 public class IOTDataBase {
 	
 	ReadWriteLock rwLock = new ReentrantReadWriteLock();
@@ -26,24 +26,31 @@ public class IOTDataBase {
 
 	public int add(List<DeviceDetails> deviceDetailList) {
 		
+		int status = -1;
+		
 		if(deviceDetailList.isEmpty()) {
-			return -1;
+			return status;
 		}
 		//ReentrantReadWriteLock - write lock will stop all in coming read operation (read thread)
 		//but wait for all the read thread already acquired the read lock and
 		//allow them to complete their read operation first before modifying the shared resource
-		
 		writeLock.lock();
+		
 		try {
+			
 			deviceDetails = deviceDetailList.parallelStream().collect(Collectors.groupingBy(DeviceDetails::getProductId));
+			status = 1;
+			
 		}catch(Throwable t) {
+			
+			status = -1;
+			
+		}finally{
+			
 			writeLock.unlock();
-			return -1;
-		}
+		}	
 		
-		writeLock.unlock();
-		
-		return 1;
+		return status;
 	}
 	
 	
@@ -51,7 +58,6 @@ public class IOTDataBase {
 		
 		//ReentrantReadWriteLock - read lock allow parallel access to all read operation
 		//on a shared resource but will lock all read operation when write lock is locked
-		
 		readLock.lock();
 		
 		if(deviceDetails == null) {
